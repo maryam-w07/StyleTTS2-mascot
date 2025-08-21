@@ -121,15 +121,15 @@ def load_model(config_path="Configs/config_ft.yml", device="cuda"):
 import json
 import os
 
-with open(os.path.join(os.path.dirname(__file__), "phoneme_2_viseme.json"), "r") as f:
-    phoneme_2_viseme = json.load(f)
+with open(os.path.join(os.path.dirname(__file__), "phoneme_viseme.json"), "r") as f:
+    phoneme_viseme = json.load(f)
 
 
 def inference_viseme_json(
     model_bundle: dict,
     audio_path: str,
     text: str,
-    mapping_path: str = "phoneme_to_viseme.json",
+    mapping_path: str = "phoneme_viseme.json",
 ):
     """
     Run viseme inference using preloaded models.
@@ -156,7 +156,7 @@ def inference_viseme_json(
         raise RuntimeError("text_aligner not found in model bundle.")
 
     # ---------- Load phoneme->viseme mapping ----------
-    phoneme_to_viseme = {}
+    phoneme_viseme = {}
     tried_paths = []
     for cand in [
         mapping_path,
@@ -166,18 +166,17 @@ def inference_viseme_json(
     ]:
         if cand and osp.isfile(cand):
             with open(cand, "r", encoding="utf-8") as f:
-                phoneme_to_viseme = json.load(f)
+                phoneme_viseme = json.load(f)
             break
         if cand:
             tried_paths.append(cand)
-    if not phoneme_to_viseme:
-        print(f"[WARN] phoneme_to_viseme mapping not found. Tried: {tried_paths}. "
+    if not phoneme_viseme:
+        print(f"[WARN] phoneme_viseme mapping not found. Tried: {tried_paths}. "
               f"Proceeding with default mapping to 0.")
 
     # ---------- Constants (match your original script) ----------
     sample_rate = 24000
     hop_length = 300
-    # NOTE: Original code used a fixed 25.0 ms/frame, keep behavior unchanged
     frame_duration_ms = 25.0
 
     # ---------- Audio loader (handles wav + mp3 robustly) ----------
@@ -266,21 +265,21 @@ def inference_viseme_json(
     id2ph = {v: k for k, v in text_cleaner.word_index_dictionary.items()}
 
     # ---------- Build viseme JSON ----------
-    # Skip symbols (as in your original code)
+    # Skip symbols 
     SKIPPED_SYMBOLS = set(';:,.!?¡¿—…\"«»“”ǃːˈˌˑʼ˞↓↑→↗↘̩')
 
     output_json = []
     start_ms = 0.0
     for ph_id, dur in zip(ph_ids, durations):
         symbol = id2ph.get(ph_id, f"[UNK_{ph_id}]")
-        duration_ms = dur * frame_duration_ms  # keep original behavior
+        duration_ms = dur * frame_duration_ms  
 
         if symbol in SKIPPED_SYMBOLS:
             # Advance time but don't emit a viseme frame
             start_ms += duration_ms
             continue
 
-        viseme_id = phoneme_to_viseme.get(symbol, 0)
+        viseme_id = phoneme_viseme.get(symbol, 0)
         output_json.append(
             {
                 "offset": round(float(start_ms), 3),
