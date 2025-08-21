@@ -18,9 +18,10 @@ async def infer_visemes(
     text: str = Form(..., description="Input text"),
 ):
     # Save uploaded file temporarily
-    with tempfile.NamedTemporaryFile(delete=False, suffix=file.filename) as tmp:
+    with tempfile.NamedTemporaryFile(delete=False, suffix=os.path.splitext(file.filename)[1]) as tmp:
         tmp.write(await file.read())
         tmp_path = tmp.name
+
 
     # Run inference
     try:
