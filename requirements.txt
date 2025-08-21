@@ -16,5 +16,10 @@ python-multipart
 # Audio processing
 phonemizer
 
-# Additional dependencies
+# Additional StyleTTS2 dependencies
+pandas
+transformers
 tensorboard
+
+# For testing and development
+requests
