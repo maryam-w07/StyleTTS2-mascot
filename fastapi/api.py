@@ -1,6 +1,6 @@
 from fastapi import FastAPI, UploadFile, File, Form
 from fastapi.responses import JSONResponse
-from .inference_module import load_model, inference_viseme_json
+from inference_module import load_model, inference_viseme_json
 import tempfile
 import uvicorn
 
