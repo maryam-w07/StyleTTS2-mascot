@@ -25,7 +25,7 @@ import soundfile as sf
 import librosa
 import torchaudio
 from phonemizer import phonemize
-from phonemizer.separator import Separato
+from phonemizer.separator import Separator
 from meldataset import TextCleaner
 from utils import length_to_mask, mask_from_lens, maximum_path
 
