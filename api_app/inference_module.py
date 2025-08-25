@@ -39,18 +39,25 @@ class MyDataParallel(torch.nn.DataParallel):
             return getattr(self.module, name)
 
 
-def load_model(config_path="Configs/config_ft.yml", device="cuda"):
+def load_model(config_path=None, device="cuda"):
     """
     Loads all pretrained models, configs, optimizer, and returns model objects
     for inference or training.
     """
+    if config_path is None:
+        # Resolve path relative to this file, one level up
+        config_path = os.path.join(os.path.dirname(__file__), "..", "Configs", "config_ft.yml")
+        config_path = os.path.abspath(config_path)
+
     config = yaml.safe_load(open(config_path))
 
     log_dir = config['log_dir']
     if not osp.exists(log_dir):
         os.makedirs(log_dir, exist_ok=True)
     shutil.copy(config_path, osp.join(log_dir, osp.basename(config_path)))
-    writer = SummaryWriter(log_dir + "/tensorboard")
+
+    # If you use TensorBoard
+    writer = SummaryWriter(os.path.join(log_dir, "tensorboard"))
 
     # Parameters
     loss_params = Munch(config['loss_params'])
