@@ -123,8 +123,11 @@ def load_model(config_path="Configs/config_ft.yml", device="cuda"):
 # ---------- load phoneme to viseme map ----------
 import json
 import os
+# Get path to the parent folder
+json_path = os.path.join(os.path.dirname(__file__), "..", "phoneme_viseme.json")
 
-with open(os.path.join(os.path.dirname(__file__), "phoneme_viseme.json"), "r") as f:
+# Load the JSON
+with open(json_path, "r") as f:
     phoneme_viseme = json.load(f)
 
 
