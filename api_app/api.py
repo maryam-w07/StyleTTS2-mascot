@@ -1,3 +1,6 @@
+import sys, os
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
 from fastapi import FastAPI, UploadFile, File, Form
 from fastapi.responses import JSONResponse
 from inference_module import load_model, inference_viseme_json
