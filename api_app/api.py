@@ -12,7 +12,7 @@ app = FastAPI(title="Viseme Inference API")
 
 # Load model once on startup
 print("[INFO] Loading model...")
-model_bundle = load_model(config_path=None, device="cuda")
+model_bundle = load_model(config_path=os.path.join(os.path.dirname(__file__), "..", "config_ft.yml"), device="cuda")
 print("[INFO] Model ready.")
 
 @app.post("/infer/")
