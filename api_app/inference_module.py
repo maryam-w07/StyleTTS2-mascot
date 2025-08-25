@@ -178,9 +178,10 @@ def inference_viseme_json(
 
     # ---------- Resolve device & components ----------
     device = model_bundle.get("device", "cuda" if torch.cuda.is_available() else "cpu")
-    model = model_bundle["model"]
+    #model = model_bundle["model"]
     # Prefer the aligner inside the built model; fall back to separate return if needed
-    text_aligner = model.get("text_aligner", model_bundle.get("text_aligner", None))
+    text_aligner = model_bundle.get("text_aligner", None)
+    #text_aligner = model.get("text_aligner", model_bundle.get("text_aligner", None))
     if text_aligner is None:
         raise RuntimeError("text_aligner not found in model bundle.")
 
