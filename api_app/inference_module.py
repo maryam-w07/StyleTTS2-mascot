@@ -46,11 +46,24 @@ def load_model(config_path=None, device="cuda"):
     """
     if config_path is None:
         # Resolve path relative to this file, one level up
-        config_path = os.path.join(os.path.dirname(__file__), "..", "Configs", "config_ft.yml")
+        config_path = os.path.join(os.path.dirname(__file__), "..", "config_ft.yml")
         config_path = os.path.abspath(config_path)
 
+    # Load YAML config
     config = yaml.safe_load(open(config_path))
 
+    # ---------- Fix relative paths ----------
+    # Make ASR paths absolute
+    if 'ASR_path' in config and config['ASR_path']:
+        config['ASR_path'] = os.path.abspath(
+            os.path.join(os.path.dirname(__file__), "..", config['ASR_path'])
+        )
+    if 'ASR_config' in config and config['ASR_config']:
+        config['ASR_config'] = os.path.abspath(
+            os.path.join(os.path.dirname(__file__), "..", config['ASR_config'])
+        )
+
+    # Setup log dir
     log_dir = config['log_dir']
     if not osp.exists(log_dir):
         os.makedirs(log_dir, exist_ok=True)
@@ -58,6 +71,9 @@ def load_model(config_path=None, device="cuda"):
 
     # If you use TensorBoard
     writer = SummaryWriter(os.path.join(log_dir, "tensorboard"))
+
+    # Return the config so later functions can use absolute paths
+    return {"config": config, "device": device, "writer": writer}
 
     # Parameters
     loss_params = Munch(config['loss_params'])
